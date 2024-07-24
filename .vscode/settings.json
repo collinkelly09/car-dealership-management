@@ -1,0 +1,13 @@
+{
+    "python.analysis.extraPaths": [
+        "./service/api",
+        "./sales/api",
+        "./billing/api"
+    ],
+    "editor.tabSize": 2,
+    "cSpell.words": [
+        "appt",
+        "appts",
+        "Lillith"
+    ]
+}
