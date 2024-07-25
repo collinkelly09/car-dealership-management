@@ -1,7 +1,7 @@
 import json
 from django.http import JsonResponse
-from .encoders import TechnicianEncoder, AppointmentEncoder
-from .models import Technician, Appointment, AutomobileVO
+from .encoders import ServicesEncoder, TechnicianEncoder, AppointmentEncoder
+from .models import Services, Technician, Appointment, AutomobileVO
 from django.views.decorators.http import require_http_methods
 
 # Create your views here.
@@ -138,3 +138,27 @@ def api_finish_appointment(request, pk):
         )
         response.status_code = 404
         return response
+
+@require_http_methods(["GET", "POST"])
+def api_list_services(request):
+    if request.method == "GET":
+        services = Services.objects.all()
+        return JsonResponse(
+            {"services": services},
+            encoder=ServicesEncoder
+        )
+    else:
+        try:
+            content = json.loads(request.body)
+            service = Services.objects.create(**content)
+            return JsonResponse(
+                service,
+                encoder=ServicesEncoder,
+                safe=False
+            )
+        except:
+            response = JsonResponse(
+                {"message": "Could not create service"}
+            )
+            response.status_code = 400
+            return response

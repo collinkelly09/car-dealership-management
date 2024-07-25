@@ -149,6 +149,7 @@ def list_sales(request):
     else:
         try:
             content = json.loads(request.body)
+            print(content)
             automobile = AutomobileVO.objects.get(vin=content["automobile"])
             salesperson = Salesperson.objects.get(employee_id=content["salesperson"])
             customer = Customer.objects.get(id=content["customer"])

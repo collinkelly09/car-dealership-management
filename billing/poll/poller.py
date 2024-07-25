@@ -19,14 +19,18 @@ def poll():
         try:
             sales_response = requests.get("http://sales-api:8000/api/sales/")
             appointment_response = requests.get("http://service-api:8000/api/appointments/")
+            service_response = requests.get("http://service-api:8000/api/services/")
             sales_content = json.loads(sales_response.content)
             appointment_content = json.loads(appointment_response.content)
+            service_content = json.loads(service_response.content)
             for sale in sales_content['sales']:
+                print(sale["automobile"])
                 SaleVO.objects.update_or_create(
                     import_id = sale["id"],
                     defaults= {
                         "price": sale["price"],
-                        "salesperson": sale["salesperson"]
+                        "salesperson": sale["salesperson"],
+                        "automobile": sale["automobile"]
                     }
                 )
             for appt in appointment_content['appointments']:

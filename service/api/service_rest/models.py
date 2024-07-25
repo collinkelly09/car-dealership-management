@@ -8,6 +8,11 @@ class Technician(models.Model):
     last_name = models.CharField(max_length=200)
     employee_id = models.CharField(max_length=50)
 
+class Services(models.Model):
+    type = models.CharField(max_length=200, unique=True)
+    parts_cost = models.PositiveIntegerField(null=True, blank=True)
+    labor_cost = models.PositiveSmallIntegerField()
+
 class Appointment(models.Model):
     date_time = models.DateTimeField()
     reason = models.CharField(max_length=200)
