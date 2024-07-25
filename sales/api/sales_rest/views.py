@@ -4,7 +4,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from .encoders import SalespeopleEncoder, CustomersEncoder, SalesEncoder
 from .models import Salesperson, Customer, Sale, AutomobileVO
-
+import requests
 
 @require_http_methods(["GET", "POST"])
 def list_salespeople(request):
@@ -149,21 +149,34 @@ def list_sales(request):
     else:
         try:
             content = json.loads(request.body)
-            print(content)
             automobile = AutomobileVO.objects.get(vin=content["automobile"])
-            salesperson = Salesperson.objects.get(employee_id=content["salesperson"])
-            customer = Customer.objects.get(id=content["customer"])
-            sale = Sale.objects.create(
-                price=content["price"],
-                automobile=automobile,
-                salesperson=salesperson,
-                customer=customer
-            )
-            return JsonResponse(
-                sale,
-                encoder=SalesEncoder,
-                safe=False,
-            )
+            if automobile.sold == False:
+                salesperson = Salesperson.objects.get(employee_id=content["salesperson"])
+                customer = Customer.objects.get(id=content["customer"])
+                sale = Sale.objects.create(
+                    price=content["price"],
+                    automobile=automobile,
+                    salesperson=salesperson,
+                    customer=customer
+                )
+                
+                auto_url = f'http://inventory-api:8000/api/automobiles/{automobile}/'
+
+                payload = {"sold": True}
+                
+                requests.put(auto_url, json=payload)
+
+                return JsonResponse(
+                    sale,
+                    encoder=SalesEncoder,
+                    safe=False,
+                )
+            else:
+                response = JsonResponse(
+                    {"message": "Vehicle is already sold"}
+                )
+                response.status_code = 400
+                return response
         except AutomobileVO.DoesNotExist:
             return JsonResponse({"message": "Invalid Automobile VIN"}, status=400)
         except Salesperson.DoesNotExist:

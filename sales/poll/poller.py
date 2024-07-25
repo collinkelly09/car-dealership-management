@@ -21,7 +21,10 @@ def poll():
             content = json.loads(response.content)
             for car in content["autos"]:
                 AutomobileVO.objects.update_or_create(
-                    vin=car["vin"]
+                    vin=car["vin"],
+                    defaults={
+                        "sold": car["sold"]
+                    }
                 )
         except Exception as e:
             print(e, file=sys.stderr)
