@@ -7,6 +7,11 @@ class SaleVO(models.Model):
   price = models.PositiveIntegerField()
   import_id = models.PositiveBigIntegerField()
 
+class ServiceVO(models.Model):
+  type = models.CharField(max_length=200)
+  parts_cost = models.PositiveIntegerField()
+  labor_cost = models.PositiveSmallIntegerField()
+
 class AppointmentVO(models.Model):
   import_id = models.PositiveBigIntegerField(unique=True)
   status = models.CharField(max_length=20)

@@ -10,7 +10,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "billing_project.settings")
 django.setup()
 
 
-from billing_rest.models import SaleVO, AppointmentVO
+from billing_rest.models import SaleVO, AppointmentVO, ServiceVO
 
 
 def poll():
@@ -19,10 +19,10 @@ def poll():
         try:
             sales_response = requests.get("http://sales-api:8000/api/sales/")
             appointment_response = requests.get("http://service-api:8000/api/appointments/")
-            # service_response = requests.get("http://service-api:8000/api/services/")
+            service_response = requests.get("http://service-api:8000/api/services/")
             sales_content = json.loads(sales_response.content)
             appointment_content = json.loads(appointment_response.content)
-            # service_content = json.loads(service_response.content)
+            service_content = json.loads(service_response.content)
             for sale in sales_content['sales']:
                 SaleVO.objects.update_or_create(
                     import_id = sale["id"],
@@ -41,12 +41,18 @@ def poll():
                         "vip": appt["vip"]
                     }
                 )
-                # print
-            # for service in service_content[""]
+            for service in service_content["services"]:
+                ServiceVO.objects.update_or_create(
+                    type = service["type"],
+                    defaults = {
+                        "parts_cost": service["parts_cost"],
+                        "labor_cost": service["labor_cost"]
+                    }
+                )
         except Exception as e:
             print(e, file=sys.stderr)
 
-        time.sleep(10)
+        time.sleep(60)
 
 
 if __name__ == "__main__":
