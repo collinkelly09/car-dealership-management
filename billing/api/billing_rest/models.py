@@ -5,7 +5,7 @@ class SaleVO(models.Model):
   automobile = models.CharField(max_length=200)
   salesperson = models.CharField(max_length=200)
   price = models.PositiveIntegerField()
-  import_id = models.PositiveBigIntegerField(unique=True)
+  import_id = models.PositiveBigIntegerField()
 
 class AppointmentVO(models.Model):
   import_id = models.PositiveBigIntegerField(unique=True)
